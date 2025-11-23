@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start</title>
+    <style>
+        html, body{
+            height: 100%;
+            margin: 0;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        body{
+            background: #0a0a0a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+  
+  <!-- MAIN MENU VIEW -->
+  <div id="menu" class="view active">
+    <h1>🐍 SNAKE GAME</h1>
+    <button onclick="">PLAY GAME</button>
+    <button onclick="">LEADERBOARD</button>
+  </div>
+
+  <!-- LEVEL SELECT VIEW -->
+  <div id="levelSelect" class="view">
+    <h1>SELECT LEVEL</h1>
+    <div class="level-grid">
+      <button class="level-button" onclick="">
+        LEVEL 1<br>Classic
+      </button>
+      <button class="level-button" onclick="">
+        LEVEL 2<br>Walls
+      </button>
+      <button class="level-button" onclick="">
+        LEVEL 3<br>Maze
+      </button>
+      <button class="level-button" onclick="">
+        LEVEL 4<br>Challenge
+      </button>
+    </div>
+    <button class="back-button" onclick="">BACK TO MENU</button>
+  </div>
+
+  <!-- GAME VIEW -->
+  <div id="game" class="view">
+    <div id="scoreDisplay">Score: 0 | Level: 1</div>
+    <canvas width="400" height="400" id="gameCanvas"></canvas>
+    <div id="gameOverMsg"></div>
+    <br>
+    <button class="back-button" onclick="">QUIT TO MENU</button>
+  </div>
+
+  <!-- LEADERBOARD VIEW -->
+  <div id="leaderboard" class="view">
+    <h1>🏆 LEADERBOARD</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Name</th>
+          <th>Score</th>
+          <th>Level</th>
+        </tr>
+      </thead>
+      <tbody id="leaderboardBody">
+        <!--JavaScript will complete this part-->
+      </tbody>
+    </table>
+    <button class="back-button" onclick="">BACK TO MENU</button>
+  </div>
+
+</div>
+<script>
+
+</script>
+</body>
+</html>
