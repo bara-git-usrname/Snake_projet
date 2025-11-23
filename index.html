@@ -43,8 +43,8 @@
   <!-- MAIN MENU VIEW -->
   <div id="menu" class="view active">
     <h1>🐍 SNAKE GAME</h1>
-    <button onclick="">PLAY GAME</button>
-    <button onclick="">LEADERBOARD</button>
+    <button onclick="showLevelSelect()">PLAY GAME</button>
+    <button onclick="showLeaderboard()">LEADERBOARD</button>
   </div>
 
   <!-- LEVEL SELECT VIEW -->
@@ -64,7 +64,7 @@
         LEVEL 4<br>Challenge
       </button>
     </div>
-    <button class="back-button" onclick="">BACK TO MENU</button>
+    <button class="back-button" onclick="showMenu()">BACK TO MENU</button>
   </div>
 
   <!-- GAME VIEW -->
@@ -101,11 +101,11 @@ var canvas = document.getElementById('gameCanvas');
 var context = canvas.getContext('2d');
 var grid = 16;
 var count = 0;
-var gameRunning = false;
+var gameRunning = false; //variable for game to run/stop
 var currentLevel = 1;
 var score = 0;
 
-// Snake object
+// Snake
 var snake = {
   x: 160,
   y: 160,
@@ -115,13 +115,13 @@ var snake = {
   maxCells: 4
 };
 
-// Apple object
+// Apple
 var apple = {
   x: 320,
   y: 320
 };
 
-// Obstacles array - different for each level
+//Obstacles
 var obstacles = [];
 function getLevelObstacles(level) {
   var obs = [];
@@ -173,6 +173,30 @@ function getLevelObstacles(level) {
   
   return obs;
 }
+function showView(viewId) {
+  // Hide div
+  var views = document.getElementsByClassName('view');
+  for (var i = 0; i < views.length; i++) {
+    views[i].classList.remove('active');
+  }
+  // show
+  document.getElementById(viewId).classList.add('active');
+}
+
+function showMenu() {
+  showView('menu');
+  gameRunning = false;
+}
+
+function showLevelSelect() {
+  showView('levelSelect');
+}
+
+function showLeaderboard() {
+  showView('leaderboard');
+  //displayLeaderboard();
+}
+
 </script>
 </body>
 </html>
