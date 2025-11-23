@@ -19,7 +19,6 @@
         justify-content: center;
         color: white;
       }
-      
       #container {
         text-align: center;
       }
@@ -98,7 +97,82 @@
 
 </div>
 <script>
+var canvas = document.getElementById('gameCanvas');
+var context = canvas.getContext('2d');
+var grid = 16;
+var count = 0;
+var gameRunning = false;
+var currentLevel = 1;
+var score = 0;
 
+// Snake object
+var snake = {
+  x: 160,
+  y: 160,
+  dx: grid,
+  dy: 0,
+  cells: [],
+  maxCells: 4
+};
+
+// Apple object
+var apple = {
+  x: 320,
+  y: 320
+};
+
+// Obstacles array - different for each level
+var obstacles = [];
+function getLevelObstacles(level) {
+  var obs = [];
+  
+  if (level === 1) {
+    // Level 1
+    obs = [];
+  }
+  else if (level === 2) {
+    // Level 2
+    for (var i = 3; i < 22; i++) {
+      obs.push({x: i * grid, y: 3 * grid});
+    }
+    for (var i = 3; i < 22; i++) {
+      obs.push({x: i * grid, y: 21 * grid});
+    }
+    for (var i = 3; i < 22; i++) {
+      obs.push({x: 3 * grid, y: i * grid});
+    }
+    for (var i = 3; i < 22; i++) {
+      obs.push({x: 21 * grid, y: i * grid});
+    }
+  }
+  else if (level === 3) {
+    // Level 3
+    for (var i = 5; i < 15; i++) {
+      obs.push({x: 8 * grid, y: i * grid});
+      obs.push({x: 16 * grid, y: i * grid});
+    }
+    for (var i = 8; i < 17; i++) {
+      obs.push({x: i * grid, y: 10 * grid});
+    }
+  }
+  else if (level === 4) {
+    // Level 4
+    for (var i = 8; i < 17; i++) {
+      obs.push({x: 12 * grid, y: i * grid});
+      obs.push({x: i * grid, y: 12 * grid});
+    }
+    for (var i = 0; i < 3; i++) {
+      for (var j = 0; j < 3; j++) {
+        obs.push({x: i * grid, y: j * grid});
+        obs.push({x: (24 - i) * grid, y: j * grid});
+        obs.push({x: i * grid, y: (24 - j) * grid});
+        obs.push({x: (24 - i) * grid, y: (24 - j) * grid});
+      }
+    }
+  }
+  
+  return obs;
+}
 </script>
 </body>
 </html>
