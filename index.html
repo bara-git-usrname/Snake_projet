@@ -5,18 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Start</title>
     <style>
-        html, body{
-            height: 100%;
-            margin: 0;
-            font-family: 'Courier New', Courier, monospace;
-        }
-        body{
-            background: #0a0a0a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
+
+      html, body {
+        height: 100%;
+        margin: 0;
+        font-family: 'Courier New', monospace;
+      }
+
+      body {
+        background: #0a0a0a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+      }
+      
+      #container {
+        text-align: center;
+      }
+
+      /* Hide views by default */
+      .view {
+        display: none;
+      }
+
+      .view.active {
+        display: block;
+      }
+
+      #menu {
+      padding: 20px;
+    }
     </style>
 </head>
 <body>
