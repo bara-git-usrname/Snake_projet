@@ -35,6 +35,97 @@
       #menu {
       padding: 20px;
     }
+
+  h1 {
+    color: #4ade80;
+    font-size: 48px;
+    margin-bottom: 30px;
+    text-shadow: 0 0 10px #4ade80;
+  }
+
+  button {
+    background: #4ade80;
+    color: black;
+    border: none;
+    padding: 15px 30px;
+    margin: 10px;
+    font-size: 18px;
+    font-family: 'Courier New', monospace;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s;
+  }
+
+  button:hover {
+    background: #22c55e;
+    transform: scale(1.05);
+  }
+
+  .level-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 500px;
+    margin: 20px auto;
+  }
+
+  .level-button {
+    padding: 30px;
+    font-size: 16px;
+  }
+
+  canvas {
+    border: 2px solid #4ade80;
+    box-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
+  }
+
+  
+  #scoreDisplay {
+    font-size: 24px;
+    margin: 15px;
+    color: #4ade80;
+  }
+
+  
+  #leaderboard table {
+    margin: 20px auto;
+    border-collapse: collapse;
+    min-width: 400px;
+  }
+
+  #leaderboard th {
+    background: #4ade80;
+    color: black;
+    padding: 12px;
+    font-size: 18px;
+  }
+
+  #leaderboard td {
+    padding: 10px;
+    border-bottom: 1px solid #333;
+    font-size: 16px;
+  }
+
+  #leaderboard tr:nth-child(even) {
+    background: #1a1a1a;
+  }
+
+  
+  #gameOverMsg {
+    display: none;
+    margin: 20px;
+    font-size: 24px;
+    color: #ff6b6b;
+  }
+
+  .back-button {
+    background: #666;
+    margin-top: 20px;
+  }
+
+  .back-button:hover {
+    background: #888;
+  }
     </style>
 </head>
 <body>
@@ -51,16 +142,16 @@
   <div id="levelSelect" class="view">
     <h1>SELECT LEVEL</h1>
     <div class="level-grid">
-      <button class="level-button" onclick="">
+      <button class="level-button" onclick="startGame(1)">
         LEVEL 1<br>Classic
       </button>
-      <button class="level-button" onclick="">
+      <button class="level-button" onclick="startGame(2)">
         LEVEL 2<br>Walls
       </button>
-      <button class="level-button" onclick="">
+      <button class="level-button" onclick="startGame(3)">
         LEVEL 3<br>Maze
       </button>
-      <button class="level-button" onclick="">
+      <button class="level-button" onclick="startGame(4)">
         LEVEL 4<br>Challenge
       </button>
     </div>
@@ -73,7 +164,7 @@
     <canvas width="400" height="400" id="gameCanvas"></canvas>
     <div id="gameOverMsg"></div>
     <br>
-    <button class="back-button" onclick="">QUIT TO MENU</button>
+    <button class="back-button" onclick="endgame()">QUIT TO MENU</button>
   </div>
 
   <!-- LEADERBOARD VIEW -->
@@ -92,7 +183,7 @@
         <!--JavaScript will complete this part-->
       </tbody>
     </table>
-    <button class="back-button" onclick="">BACK TO MENU</button>
+    <button class="back-button" onclick="showMenu()">BACK TO MENU</button>
   </div>
 
 </div>
@@ -101,7 +192,7 @@ var canvas = document.getElementById('gameCanvas');
 var context = canvas.getContext('2d');
 var grid = 16;
 var count = 0;
-var gameRunning = false; //variable for game to run/stop
+var gameRunning = false; //variable run/stop
 var currentLevel = 1;
 var score = 0;
 
@@ -194,8 +285,268 @@ function showLevelSelect() {
 
 function showLeaderboard() {
   showView('leaderboard');
-  //displayLeaderboard();
+  displayLeaderboard();
 }
+
+function startGame(level) {
+  currentLevel = level;
+  score = 0;
+  
+  // Reset snake
+  snake.x = 32;
+  snake.y = 32;
+  snake.cells = [];
+  snake.maxCells = 4;
+  snake.dx = grid;
+  snake.dy = 0;
+  
+  // obstacles
+  obstacles = getLevelObstacles(level);
+  
+  // apple
+  placeApple();
+  
+  // Reset
+  document.getElementById('gameOverMsg').style.display = 'none';
+  
+  // Update score
+  updateScoreDisplay();
+  
+  // game view and restart
+  showView('game');
+  gameRunning = true;
+  requestAnimationFrame(loop);
+}
+
+function endGame() {
+  gameRunning = false;
+  showMenu();
+}
+
+function gameOver() {
+  gameRunning = false;
+  
+  // game overr
+  var msg = document.getElementById('gameOverMsg');
+  msg.textContent = '💀 GAME OVER! Final Score: ' + score;
+  msg.style.display = 'block';
+  
+  // name + leaderboard
+  setTimeout(function() {
+    var playerName = prompt('Enter your name for the leaderboard:', 'Player');
+    if (playerName) {
+      saveScore(playerName, score, currentLevel);
+    }
+  }, 500);
+}
+
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function updateScoreDisplay() {
+  document.getElementById('scoreDisplay').textContent = 
+    'Score: ' + score + ' | Level: ' + currentLevel;
+}
+
+// Place apple in good place
+function placeApple() {
+  var validPosition = false;
+  
+  while (!validPosition) {
+    apple.x = getRandomInt(0, 25) * grid;
+    apple.y = getRandomInt(0, 25) * grid;
+    
+    validPosition = true;
+    
+    // Check if apple is on an obstacle
+    for (var i = 0; i < obstacles.length; i++) {
+      if (apple.x === obstacles[i].x && apple.y === obstacles[i].y) {
+        validPosition = false;
+        break;
+      }
+    }
+    
+    // Check if apple is on snake
+    for (var i = 0; i < snake.cells.length; i++) {
+      if (apple.x === snake.cells[i].x && apple.y === snake.cells[i].y) {
+        validPosition = false;
+        break;
+      }
+    }
+  }
+}
+
+function checkObstacleCollision(x, y) {
+  for (var i = 0; i < obstacles.length; i++) {
+    if (x === obstacles[i].x && y === obstacles[i].y) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
+function loop() {
+  if (!gameRunning) return;
+  
+  requestAnimationFrame(loop);
+
+  //15 fps
+  if (++count < 4) {
+    return;
+  }
+
+  count = 0;
+  context.clearRect(0, 0, canvas.width, canvas.height);
+
+  // move snake by 1 delta
+  snake.x += snake.dx;
+  snake.y += snake.dy;
+
+  // Wrap snake position on screen edges
+  if (snake.x < 0) {
+    snake.x = canvas.width - grid;
+  }
+  else if (snake.x >= canvas.width) {
+    snake.x = 0;
+  }
+
+  if (snake.y < 0) {
+    snake.y = canvas.height - grid;
+  }
+  else if (snake.y >= canvas.height) {
+    snake.y = 0;
+  }
+
+  // Check obstacle snake
+  if (checkObstacleCollision(snake.x, snake.y)) {
+    gameOver();
+    return;
+  }
+
+  snake.cells.unshift({x: snake.x, y: snake.y});
+
+  // Remove cells
+  if (snake.cells.length > snake.maxCells) {
+    snake.cells.pop();
+  }
+
+  // Draw obstacles
+  context.fillStyle = '#ff6b6b';
+  for (var i = 0; i < obstacles.length; i++) {
+    context.fillRect(obstacles[i].x, obstacles[i].y, grid - 1, grid - 1);
+  }
+
+  // Draw apple
+  context.fillStyle = 'red';
+  context.fillRect(apple.x, apple.y, grid - 1, grid - 1);
+
+  // Draw snake
+  context.fillStyle = '#4ade80';
+  snake.cells.forEach(function(cell, index) {
+    if (index === 0) {
+      context.fillStyle = '#22c55e'; //bright color head
+    } else {
+      context.fillStyle = '#4ade80';
+    }
+    
+    context.fillRect(cell.x, cell.y, grid - 1, grid - 1);
+
+    // Check if snake ate
+    if (cell.x === apple.x && cell.y === apple.y) {
+      snake.maxCells++;
+      score += 10; // Increase score
+      updateScoreDisplay();
+      placeApple(); // Place new apple
+    }
+
+    // Check collision
+    for (var i = index + 1; i < snake.cells.length; i++) {
+      if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
+        gameOver();
+        return;
+      }
+    }
+  });
+}
+
+document.addEventListener('keydown', function(e) {
+  if (!gameRunning) return;
+  
+  // Left
+  if (e.which === 37 && snake.dx === 0) {
+    snake.dx = -grid;
+    snake.dy = 0;
+  }
+  // Up
+  else if (e.which === 38 && snake.dy === 0) {
+    snake.dy = -grid;
+    snake.dx = 0;
+  }
+  // Right
+  else if (e.which === 39 && snake.dx === 0) {
+    snake.dx = grid;
+    snake.dy = 0;
+  }
+  // Down
+  else if (e.which === 40 && snake.dy === 0) {
+    snake.dy = grid;
+    snake.dx = 0;
+  }
+});
+
+//localstorage
+
+function saveScore(name, score, level) {
+  var leaderboard = JSON.parse(localStorage.getItem('snakeLeaderboard')) || [];
+  
+  // Add score
+  leaderboard.push({
+    name: name,
+    score: score,
+    level: level,
+    date: new Date().toISOString()
+  });
+  
+  // Sort score
+  leaderboard.sort(function(a, b) {
+    return b.score - a.score;
+  });
+  
+  // 10 scores
+  leaderboard = leaderboard.slice(0, 10);
+  
+  // Save to localStorage
+  localStorage.setItem('snakeLeaderboard', JSON.stringify(leaderboard));
+}
+
+function displayLeaderboard() {
+  var leaderboard = JSON.parse(localStorage.getItem('snakeLeaderboard')) || [];
+  var tbody = document.getElementById('leaderboardBody');
+  
+  // Clear existing rows
+  tbody.innerHTML = '';
+  
+  if (leaderboard.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4">No scores yet. Play a game!</td></tr>';
+    return;
+  }
+  
+  // Create a row for each score
+  leaderboard.forEach(function(entry, i) {
+    var row = document.createElement('tr');
+    row.innerHTML = 
+      '<td>' + (i + 1) + '</td>' +
+      '<td>' + entry.name + '</td>' +
+      '<td>' + entry.score + '</td>' +
+      '<td>' + entry.level + '</td>';
+    tbody.appendChild(row);
+  });
+}
+
+
 
 </script>
 </body>
