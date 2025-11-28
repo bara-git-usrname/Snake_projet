@@ -1,40 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Start</title>
-    <style>
+  <title>Snake Game - Levels & Leaderboard</title>
+  <meta charset="UTF-8">
+  <style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Courier New', monospace;
+  }
 
-      html, body {
-        height: 100%;
-        margin: 0;
-        font-family: 'Courier New', monospace;
-      }
+  body {
+    background: #0a0a0a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
 
-      body {
-        background: #0a0a0a;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-      }
-      #container {
-        text-align: center;
-      }
+  #container {
+    text-align: center;
+  }
 
-      /* Hide views by default */
-      .view {
-        display: none;
-      }
+  /* Hide views by default */
+  .view {
+    display: none;
+  }
 
-      .view.active {
-        display: block;
-      }
+  .view.active {
+    display: block;
+  }
 
-      #menu {
-      padding: 20px;
-    }
+  #menu {
+    padding: 20px;
+  }
 
   h1 {
     color: #4ade80;
@@ -79,14 +78,12 @@
     box-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
   }
 
-  
   #scoreDisplay {
     font-size: 24px;
     margin: 15px;
     color: #4ade80;
   }
 
-  
   #leaderboard table {
     margin: 20px auto;
     border-collapse: collapse;
@@ -110,7 +107,6 @@
     background: #1a1a1a;
   }
 
-  
   #gameOverMsg {
     display: none;
     margin: 20px;
@@ -126,19 +122,19 @@
   .back-button:hover {
     background: #888;
   }
-    </style>
+  </style>
 </head>
 <body>
-    <div id="container">
+<div id="container">
   
-  <!-- MAIN MENU VIEW -->
+  <!-- MAIN MENU -->
   <div id="menu" class="view active">
     <h1>🐍 SNAKE GAME</h1>
     <button onclick="showLevelSelect()">PLAY GAME</button>
     <button onclick="showLeaderboard()">LEADERBOARD</button>
   </div>
 
-  <!-- LEVEL SELECT VIEW -->
+  <!-- LEVEL SELECT -->
   <div id="levelSelect" class="view">
     <h1>SELECT LEVEL</h1>
     <div class="level-grid">
@@ -158,16 +154,16 @@
     <button class="back-button" onclick="showMenu()">BACK TO MENU</button>
   </div>
 
-  <!-- GAME VIEW -->
+  <!-- GAME -->
   <div id="game" class="view">
     <div id="scoreDisplay">Score: 0 | Level: 1</div>
     <canvas width="400" height="400" id="gameCanvas"></canvas>
     <div id="gameOverMsg"></div>
     <br>
-    <button class="back-button" onclick="endgame()">QUIT TO MENU</button>
+    <button class="back-button" onclick="endGame()">QUIT TO MENU</button>
   </div>
 
-  <!-- LEADERBOARD VIEW -->
+  <!-- LEADERBOARD -->
   <div id="leaderboard" class="view">
     <h1>🏆 LEADERBOARD</h1>
     <table>
@@ -180,19 +176,21 @@
         </tr>
       </thead>
       <tbody id="leaderboardBody">
-        <!--JavaScript will complete this part-->
+        <!-- javascript -->
       </tbody>
     </table>
     <button class="back-button" onclick="showMenu()">BACK TO MENU</button>
   </div>
 
 </div>
+
 <script>
+
 var canvas = document.getElementById('gameCanvas');
 var context = canvas.getContext('2d');
 var grid = 16;
 var count = 0;
-var gameRunning = false; //variable run/stop
+var gameRunning = false;
 var currentLevel = 1;
 var score = 0;
 
@@ -212,46 +210,56 @@ var apple = {
   y: 320
 };
 
-//Obstacles
+// Obstacles
 var obstacles = [];
+
+
 function getLevelObstacles(level) {
   var obs = [];
   
   if (level === 1) {
-    // Level 1
     obs = [];
   }
   else if (level === 2) {
-    // Level 2
-    for (var i = 3; i < 22; i++) {
+    // Level 2: Border walls
+    // Top wall
+    /* for (var i = 3; i < 22; i++) {
       obs.push({x: i * grid, y: 3 * grid});
-    }
-    for (var i = 3; i < 22; i++) {
+    } */
+    // Bottom wall
+    /* for (var i = 3; i < 22; i++) {
       obs.push({x: i * grid, y: 21 * grid});
+    } */
+    // Left wall
+    for (var i = 3; i < 22; i++) {
+      obs.push({x: 7 * grid, y: i * grid});
     }
+
     for (var i = 3; i < 22; i++) {
       obs.push({x: 3 * grid, y: i * grid});
     }
+    // Right wall
     for (var i = 3; i < 22; i++) {
       obs.push({x: 21 * grid, y: i * grid});
     }
   }
   else if (level === 3) {
-    // Level 3
+    // Vertical walls
     for (var i = 5; i < 15; i++) {
       obs.push({x: 8 * grid, y: i * grid});
       obs.push({x: 16 * grid, y: i * grid});
     }
+    // Horizontal walls
     for (var i = 8; i < 17; i++) {
       obs.push({x: i * grid, y: 10 * grid});
     }
   }
   else if (level === 4) {
-    // Level 4
     for (var i = 8; i < 17; i++) {
       obs.push({x: 12 * grid, y: i * grid});
       obs.push({x: i * grid, y: 12 * grid});
     }
+    // Corner
     for (var i = 0; i < 3; i++) {
       for (var j = 0; j < 3; j++) {
         obs.push({x: i * grid, y: j * grid});
@@ -264,13 +272,14 @@ function getLevelObstacles(level) {
   
   return obs;
 }
+
 function showView(viewId) {
-  // Hide div
+  //hide views
   var views = document.getElementsByClassName('view');
   for (var i = 0; i < views.length; i++) {
     views[i].classList.remove('active');
   }
-  // show
+  // Show view
   document.getElementById(viewId).classList.add('active');
 }
 
@@ -288,11 +297,12 @@ function showLeaderboard() {
   displayLeaderboard();
 }
 
+
 function startGame(level) {
   currentLevel = level;
   score = 0;
   
-  // Reset snake
+  // Reset
   snake.x = 32;
   snake.y = 32;
   snake.cells = [];
@@ -300,19 +310,19 @@ function startGame(level) {
   snake.dx = grid;
   snake.dy = 0;
   
-  // obstacles
+  // Set obstacles
   obstacles = getLevelObstacles(level);
   
-  // apple
+  // Place apple
   placeApple();
   
-  // Reset
+  // Reset game over
   document.getElementById('gameOverMsg').style.display = 'none';
   
   // Update score
   updateScoreDisplay();
   
-  // game view and restart
+  // Show gameview and start
   showView('game');
   gameRunning = true;
   requestAnimationFrame(loop);
@@ -326,12 +336,12 @@ function endGame() {
 function gameOver() {
   gameRunning = false;
   
-  // game overr
+  // Show gameover
   var msg = document.getElementById('gameOverMsg');
   msg.textContent = '💀 GAME OVER! Final Score: ' + score;
   msg.style.display = 'block';
   
-  // name + leaderboard
+  // name and save to leaderboard
   setTimeout(function() {
     var playerName = prompt('Enter your name for the leaderboard:', 'Player');
     if (playerName) {
@@ -350,7 +360,7 @@ function updateScoreDisplay() {
     'Score: ' + score + ' | Level: ' + currentLevel;
 }
 
-// Place apple in good place
+// Place apple function
 function placeApple() {
   var validPosition = false;
   
@@ -360,7 +370,7 @@ function placeApple() {
     
     validPosition = true;
     
-    // Check if apple is on an obstacle
+    // apple is on obstacle
     for (var i = 0; i < obstacles.length; i++) {
       if (apple.x === obstacles[i].x && apple.y === obstacles[i].y) {
         validPosition = false;
@@ -368,7 +378,7 @@ function placeApple() {
       }
     }
     
-    // Check if apple is on snake
+    // apple is on snake
     for (var i = 0; i < snake.cells.length; i++) {
       if (apple.x === snake.cells[i].x && apple.y === snake.cells[i].y) {
         validPosition = false;
@@ -378,6 +388,7 @@ function placeApple() {
   }
 }
 
+// Check position collision
 function checkObstacleCollision(x, y) {
   for (var i = 0; i < obstacles.length; i++) {
     if (x === obstacles[i].x && y === obstacles[i].y) {
@@ -393,7 +404,7 @@ function loop() {
   
   requestAnimationFrame(loop);
 
-  //15 fps
+  // 15 fps
   if (++count < 4) {
     return;
   }
@@ -401,11 +412,11 @@ function loop() {
   count = 0;
   context.clearRect(0, 0, canvas.width, canvas.height);
 
-  // move snake by 1 delta
+  // Move snake
   snake.x += snake.dx;
   snake.y += snake.dy;
 
-  // Wrap snake position on screen edges
+  // Wrap snake position
   if (snake.x < 0) {
     snake.x = canvas.width - grid;
   }
@@ -420,7 +431,6 @@ function loop() {
     snake.y = 0;
   }
 
-  // Check obstacle snake
   if (checkObstacleCollision(snake.x, snake.y)) {
     gameOver();
     return;
@@ -428,41 +438,38 @@ function loop() {
 
   snake.cells.unshift({x: snake.x, y: snake.y});
 
-  // Remove cells
   if (snake.cells.length > snake.maxCells) {
     snake.cells.pop();
   }
 
-  // Draw obstacles
+  // Draw canvas
   context.fillStyle = '#ff6b6b';
   for (var i = 0; i < obstacles.length; i++) {
     context.fillRect(obstacles[i].x, obstacles[i].y, grid - 1, grid - 1);
   }
 
-  // Draw apple
   context.fillStyle = 'red';
   context.fillRect(apple.x, apple.y, grid - 1, grid - 1);
 
-  // Draw snake
   context.fillStyle = '#4ade80';
   snake.cells.forEach(function(cell, index) {
     if (index === 0) {
-      context.fillStyle = '#22c55e'; //bright color head
+      context.fillStyle = '#22c55e';
     } else {
       context.fillStyle = '#4ade80';
     }
     
     context.fillRect(cell.x, cell.y, grid - 1, grid - 1);
 
-    // Check if snake ate
+    // snake eat apple
     if (cell.x === apple.x && cell.y === apple.y) {
       snake.maxCells++;
-      score += 10; // Increase score
+      score += 10;
       updateScoreDisplay();
-      placeApple(); // Place new apple
+      placeApple();
     }
 
-    // Check collision
+    // Check collision with own body
     for (var i = index + 1; i < snake.cells.length; i++) {
       if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
         gameOver();
@@ -480,7 +487,7 @@ document.addEventListener('keydown', function(e) {
     snake.dx = -grid;
     snake.dy = 0;
   }
-  // Up
+  // Up 
   else if (e.which === 38 && snake.dy === 0) {
     snake.dy = -grid;
     snake.dx = 0;
@@ -497,9 +504,8 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-//localstorage
-
 function saveScore(name, score, level) {
+  // Get leaderboard from localStorage
   var leaderboard = JSON.parse(localStorage.getItem('snakeLeaderboard')) || [];
   
   // Add score
@@ -510,12 +516,12 @@ function saveScore(name, score, level) {
     date: new Date().toISOString()
   });
   
-  // Sort score
+  // Sort by score
   leaderboard.sort(function(a, b) {
     return b.score - a.score;
   });
   
-  // 10 scores
+  //top 10 score
   leaderboard = leaderboard.slice(0, 10);
   
   // Save to localStorage
@@ -526,7 +532,6 @@ function displayLeaderboard() {
   var leaderboard = JSON.parse(localStorage.getItem('snakeLeaderboard')) || [];
   var tbody = document.getElementById('leaderboardBody');
   
-  // Clear existing rows
   tbody.innerHTML = '';
   
   if (leaderboard.length === 0) {
@@ -534,19 +539,16 @@ function displayLeaderboard() {
     return;
   }
   
-  // Create a row for each score
-  leaderboard.forEach(function(entry, i) {
+  leaderboard.forEach(function(entry, index) {
     var row = document.createElement('tr');
     row.innerHTML = 
-      '<td>' + (i + 1) + '</td>' +
+      '<td>' + (index + 1) + '</td>' +
       '<td>' + entry.name + '</td>' +
       '<td>' + entry.score + '</td>' +
       '<td>' + entry.level + '</td>';
     tbody.appendChild(row);
   });
 }
-
-
 
 </script>
 </body>
