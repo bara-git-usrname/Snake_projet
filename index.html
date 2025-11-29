@@ -245,37 +245,36 @@ function getLevelObstacles(level) {
   }
   else if (level === 3) {
     // Vertical walls
-    for (var i = 3; i < 17; i++) {
+    for (var i = 0; i < 17; i++) {
       obs.push({x: 16 * grid, y: i * grid});
+      obs.push({x: 11 * grid, y: (24-i) * grid});
     }
-    for(var i = 14; i<24; i++){
-      obs.push({x: 8 * grid, y: i * grid});
-    }
+    /* for(var i = 14; i<24; i++){
+    } */
     // Horizontal walls
-    for (var i = 3; i < 14; i++) {
-      obs.push({x: i * grid, y: 14 * grid});
+    for (var i = 0; i < 11; i++) {
+      obs.push({x: i * grid, y: 10 * grid});
     }
     for(var i = 17; i<25; i++){
-      obs.push({x : i *grid, y : 5 * grid});
+      obs.push({x : i *grid, y : 15 * grid});
     }
-    for(var i=5; i<8; i++){
-      for(var j=5; j<8; j++){
+    for(var i=5; i<7; i++){
+      for(var j=5; j<7; j++){
         obs.push({x : i *grid, y : j* grid});
         obs.push({x : (25-i)*grid, y : (25-j) * grid});
       }
     }
   }
   else if (level === 4) {
-    for (var i = 3; i < 21; i++) {
-      obs.push({x: 12 * grid, y: i * grid});
-      obs.push({x: i * grid, y: 12 * grid});
+    for(var i = 3; i<11; i++){
+      obs.push({x : i * grid, y : 10 * grid});
+      obs.push({x : i * grid, y : 14 * grid});
+      obs.push({x : (i+11)*grid, y : 10*grid});
+      obs.push({x : (i+11)*grid, y : 14*grid});
     }
-    for(var i = 12; i<17; i++){
-      obs.push({x : i*grid, y : 7 *grid});
-      obs.push({x : (i-4)*grid, y : 16 *grid});
-    }
-    for(var i = 12; i<17; i++){
-      obs.push({x : 7*grid, y : i*grid});
+    for(var i = 4; i<21; i++){
+      obs.push({x : 10*grid, y : i*grid});
+      obs.push({x : 13*grid, y : i*grid});
     }
     // Corner
     for (var i = 0; i < 3; i++) {
@@ -423,7 +422,7 @@ function loop() {
   requestAnimationFrame(loop);
 
   // 15 fps
-  if (++count < 4) {
+  if (++count < 5) {
     return;
   }
 
